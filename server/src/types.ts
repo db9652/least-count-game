@@ -19,6 +19,13 @@ export interface Player {
 
 export type TurnPhase = 'DISCARD' | 'DRAW' | 'ROUND_END';
 
+export interface GameRules {
+  eliminationScore: number;
+  cardsPerPlayer: number;
+  showThreshold: number;
+  penaltyScore: number;
+}
+
 export interface GameRoomState {
   roomId: string;
   players: Player[];
@@ -34,6 +41,7 @@ export interface GameRoomState {
   lastDiscardedBy: string | null;
   prevTopDiscardBeforeTurn: Card | null;
   skipDrawApplied: boolean;
+  rules: GameRules;
 }
 
 // Personalized game state sent to a specific player
@@ -64,4 +72,5 @@ export interface ClientGameState {
   winnerId: string | null;
   roundNumber: number;
   history: string[];
+  rules: GameRules;
 }

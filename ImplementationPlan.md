@@ -1,6 +1,6 @@
 # Project Implementation Plan - Least Count Multiplayer Game
 
-This document outlines the complete architecture, implementation details, and communication flow for the **Least Count** real-time multiplayer card game.
+This document outlines the complete architecture, implementation details, communication flow, and customizable gameplay rules for the **Least Count** real-time multiplayer card game.
 
 ---
 
@@ -13,15 +13,15 @@ The application is structured as a decoupled monorepo containing a React-based c
 * **Game Manager (`GameRoom` class)**: 
   * Orchestrates the active state of each distinct lobby.
   * Controls the phase lifecycle (`DISCARD` ➔ `DRAW` ➔ `ROUND_END`).
-  * Manages game rules execution (creating decks, shuffling, validating multi-card discards of matching ranks, calculating hand values, checking skip-draw triggers, and resolving "Show" declarations with penalties).
+  * Manages game rules execution (creating decks, shuffling, dealing, validating multi-card discards of matching ranks, calculating hand values, checking skip-draw triggers, and resolving "Show" declarations with penalties).
   * Stores session rooms in-memory with automatic cleanup upon player disconnection.
 
 ### 1.2 Frontend Application (React + Vite + TypeScript)
 * **State Orchestrator (`App.tsx`)**: Controls screen routing (Welcome Screen ➔ Lobby ➔ Active Game Table ➔ Round-End Scoreboard) based on state events received from the WebSocket layer.
 * **Real-time Synchronization (`socket.ts`)**: Establishes connections, automatically resolving ports and hostnames to route WebSocket requests through HTTP/HTTPS or Cloudflare Tunnel pathways.
 * **UI Components**:
-  * **Lobby**: Displays joined players, room codes, and hosts' control actions.
-  * **GameBoard**: Layout of the active card table with opponent rings, card piles, history logs, and player hands.
+  * **Lobby**: Displays joined players, room codes, customizable settings, and control actions.
+  * **GameBoard**: Layout of the active card table with opponent rings, card piles, history logs, player hands, and drag-and-drop support.
   * **Card**: Represents a playing card with suit-based styling, custom joker patterns, hover transitions, and selection logic.
   * **Scoreboard**: Displays round-end hand reveals, scores, penalties, and game-over standings.
 
@@ -47,11 +47,34 @@ The application is structured as a decoupled monorepo containing a React-based c
 
 ---
 
-## 3. Communication Protocols & Event Catalog
+## 3. Dynamic Rules Setup & Customizable Gameplay
+We allow the lobby host to customize four game parameters before starting the game:
+1. **Elimination Score Limit**: The cumulative point threshold at which a player is eliminated (default: `200`).
+2. **Cards Dealt per Player**: Number of cards dealt to each player at the start of a round (default: `7`).
+3. **Show Threshold**: The maximum hand value a player can have to declare a Show (default: `10`).
+4. **Wrong Show Penalty / Round Cap**: The points added to a wrong show declarer, and the maximum score cap for opponents in a round (default: `25`).
 
-### 3.1 Client-to-Server Events
+### 3.1 State & Type Modifications
+* **`server/src/types.ts`**:
+  * Added `GameRules` interface containing `eliminationScore`, `cardsPerPlayer`, `showThreshold`, and `penaltyScore`.
+  * Included `rules: GameRules` in both `GameRoomState` and `ClientGameState`.
+* **`server/src/game.ts`**:
+  * Initialize default `rules` inside the `GameRoom` constructor.
+  * Added `updateRules(rules: Partial<GameRules>)` method to apply changes.
+  * Use `this.state.rules.cardsPerPlayer` when dealing hands.
+  * Use `this.state.rules.showThreshold` inside `handleDeclareShow` to check if a show is allowed.
+  * Use `this.state.rules.penaltyScore` to apply wrong show penalties and cap round scores.
+  * Use `this.state.rules.eliminationScore` to check for game-over elimination conditions.
+  * Propagate `rules` in the `getClientState` state payload.
+
+---
+
+## 4. Communication Protocols & Event Catalog
+
+### 4.1 Client-to-Server Events
 * `createRoom({ name }, callback)`: Instantiates a new lobby and returns the player and room context.
 * `joinRoom({ roomId, name }, callback)`: Connects a player to an existing room code, supporting reconnections.
+* `updateRules({ roomId, playerId, rules }, callback)`: Updates customizable rules (host only). Broadcasts updated lobby state to all players.
 * `startGame({ roomId, playerId })`: Initiates the card dealing phase (runs only if triggered by the room host).
 * `discard({ roomId, playerId, cardIds }, callback)`: Transmits selected card IDs to discard.
 * `draw({ roomId, playerId, source }, callback)`: Requests drawing a card from `drawPile` or `discardPile`.
@@ -59,5 +82,5 @@ The application is structured as a decoupled monorepo containing a React-based c
 * `nextRound({ roomId, playerId })`: Resets round parameters and deals new hands (runs only if triggered by the host).
 * `syncState({ roomId, playerId }, callback)`: Synchronizes state variables during client page refreshes or reconnection events.
 
-### 3.2 Server-to-Client Events
+### 4.2 Server-to-Client Events
 * `gameStateUpdate`: Broadcasts the updated client-specific state payload to all connected clients in a lobby.

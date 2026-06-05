@@ -1,18 +1,19 @@
 # Least Count Card Game Rules
 
-This document outlines the gameplay, structure, and specific rules for our version of the **Least Count** card game.
+This document outlines the gameplay, structure, and specific rules for our version of the **Least Count** card game. The game host can customize these parameters prior to starting the game via the **Modify Gameplay** settings in the Lobby.
 
 ---
 
 ## 1. Objective
 The main objective of Least Count is to have the **lowest total card value** in your hand. Players accumulate points across rounds, and the player with the lowest score at the end of the game wins.
+* If a player's cumulative score reaches the **Elimination Limit** (default: **200 points**, customizable), they are eliminated.
 
 ---
 
 ## 2. Setup
 - **Players:** 2 to 6 players.
 - **Deck:** A standard 52-card deck + 1 Joker (for 2–3 players) or 2 decks + 2 Jokers (for 4–6 players).
-- **Starting Hand:** Each player is dealt exactly **7 cards**.
+- **Starting Hand:** Each player is dealt exactly **7 cards** (customizable, default: **7**).
 - **Piles:** The remaining cards are placed face down to form the **Draw Pile** (Closed Deck). The top card is turned face up to start the **Discard Pile** (Open Deck).
 
 ---
@@ -39,7 +40,7 @@ Unlike standard card games where you draw first and discard last, this variation
    - If you discard card(s) of the **exact same rank** as the card that was on top of the Discard Pile at the start of your turn, you are **exempt** from drawing.
    - For example, if the top of the pile is a 9, and you discard a 9, you do not draw a card.
    - For face cards (J, Q, K), they must match exactly (e.g., if a Jack is on top, you can only skip drawing if you discard a Jack, not a Queen or King, even though they all share the value of 10).
-   - Skipping the draw allows you to reduce your hand size below 7 cards.
+   - Skipping the draw allows you to reduce your hand size below the starting hand size.
 
 ---
 
@@ -48,7 +49,7 @@ If you believe you have the lowest total score in your hand, you can declare a *
 
 ### **Rules for Showing:**
 - **Declaration Timing:** You must declare a Show at the **very start of your turn**, before you make your Discard or Draw action.
-- **Threshold:** You can only declare a Show if the sum of all cards in your hand is **10 points or less**.
+- **Threshold:** You can only declare a Show if the sum of all cards in your hand is **less than or equal to the Show Threshold** (customizable, default: **10 points**).
 - **Resolution:**
   - All players reveal their hands and calculate their total points.
   - The player who declared a Show is compared against all other players.
@@ -61,10 +62,10 @@ At the end of a round, points are distributed as follows:
 ### **Successful Show**
 - If the player who declared Show has the **strictly lowest** score:
   - The declarer receives **0 points** for the round.
-  - All other players receive their hand's total points, capped at a maximum of **25 points**, as their score for the round.
+  - All other players receive their hand's total points, capped at a maximum of the **Penalty/Cap Score** (customizable, default: **25 points**), as their score for the round.
 
 ### **Wrong Show (Penalty)**
 - If the player who declared Show does **not** have the lowest score (i.e., at least one other player has a score less than or equal to the declarer's score):
-  - The declarer receives a penalty of **+25 points** for the round.
+  - The declarer receives a penalty equal to the **Penalty/Cap Score** (customizable, default: **+25 points**) for the round.
   - The player(s) who actually had the **lowest score** in their hand receive **0 points** for the round.
-  - All other players receive their hand's total points, capped at a maximum of **25 points**, as their score for the round.
+  - All other players receive their hand's total points, capped at a maximum of the **Penalty/Cap Score** (customizable, default: **25 points**), as their score for the round.

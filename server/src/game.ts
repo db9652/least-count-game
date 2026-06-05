@@ -1,4 +1,4 @@
-import { Card, Player, GameRoomState, ClientGameState, TurnPhase } from './types';
+import { Card, Player, GameRoomState, ClientGameState, TurnPhase, GameRules } from './types';
 
 // Helper to generate a unique card ID
 let cardIdCounter = 0;
@@ -75,7 +75,20 @@ export class GameRoom {
       history: [`Room ${roomId} created.`],
       lastDiscardedBy: null,
       prevTopDiscardBeforeTurn: null,
-      skipDrawApplied: false
+      skipDrawApplied: false,
+      rules: {
+        eliminationScore: 200,
+        cardsPerPlayer: 7,
+        showThreshold: 10,
+        penaltyScore: 25
+      }
+    };
+  }
+
+  public updateRules(rules: Partial<GameRules>): void {
+    this.state.rules = {
+      ...this.state.rules,
+      ...rules
     };
   }
 
@@ -159,13 +172,13 @@ export class GameRoom {
     let deck = createDeck(useDoubleDeck);
     deck = shuffleDeck(deck);
 
-    // Deal 7 cards to each player
+    // Deal cards to each player
     this.state.players.forEach(p => {
       p.hand = [];
       p.roundScore = 0;
     });
 
-    for (let c = 0; c < 7; c++) {
+    for (let c = 0; c < this.state.rules.cardsPerPlayer; c++) {
       this.state.players.forEach(p => {
         const card = deck.pop();
         if (card) p.hand.push(card);
@@ -325,8 +338,8 @@ export class GameRoom {
     }
 
     const declarerScore = calculateHandValue(player.hand);
-    if (declarerScore > 10) {
-      throw new Error("You can only declare Show if your hand value is 10 points or less!");
+    if (declarerScore > this.state.rules.showThreshold) {
+      throw new Error(`You can only declare Show if your hand value is ${this.state.rules.showThreshold} points or less!`);
     }
 
     this.state.history.push(`${player.name} declared SHOW with a hand total of ${declarerScore}!`);
@@ -353,28 +366,28 @@ export class GameRoom {
         if (p.id === playerId) {
           p.roundScore = 0;
         } else {
-          // Cap at maximum of 25 points
-          p.roundScore = Math.min(25, calculateHandValue(p.hand));
+          // Cap round score
+          p.roundScore = Math.min(this.state.rules.penaltyScore, calculateHandValue(p.hand));
         }
         p.score += p.roundScore;
       });
     } else {
       // WRONG SHOW (PENALTY)
-      this.state.history.push(`WRONG SHOW! Someone else had a lower or equal hand count. ${player.name} receives a +25 penalty.`);
+      this.state.history.push(`WRONG SHOW! Someone else had a lower or equal hand count. ${player.name} receives a +${this.state.rules.penaltyScore} penalty.`);
       
       // Find the player(s) with the actual lowest score
       const actualMinScore = Math.min(...playerScores.map(ps => ps.score));
 
       this.state.players.forEach(p => {
         if (p.id === playerId) {
-          // Wrong declarer gets +25 points
-          p.roundScore = 25;
+          // Wrong declarer gets penalty points
+          p.roundScore = this.state.rules.penaltyScore;
         } else if (calculateHandValue(p.hand) === actualMinScore) {
           // The actual lowest score holder(s) get 0 points
           p.roundScore = 0;
         } else {
-          // All others get their hand value capped at 25
-          p.roundScore = Math.min(25, calculateHandValue(p.hand));
+          // All others get their hand value capped
+          p.roundScore = Math.min(this.state.rules.penaltyScore, calculateHandValue(p.hand));
         }
         p.score += p.roundScore;
       });
@@ -386,7 +399,7 @@ export class GameRoom {
     });
 
     // Check for Game Over / Elimination
-    const ELIMINATION_SCORE = 200;
+    const ELIMINATION_SCORE = this.state.rules.eliminationScore;
     const anyEliminated = this.state.players.some(p => p.score >= ELIMINATION_SCORE);
 
     this.state.turnPhase = 'ROUND_END';
@@ -515,7 +528,8 @@ export class GameRoom {
       isGameOver: this.state.isGameOver,
       winnerId: this.state.winnerId,
       roundNumber: this.state.roundNumber,
-      history: this.state.history.slice(-20) // send last 20 history items
+      history: this.state.history.slice(-20), // send last 20 history items
+      rules: this.state.rules
     };
   }
 }

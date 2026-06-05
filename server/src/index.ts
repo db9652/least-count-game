@@ -127,6 +127,25 @@ io.on('connection', (socket) => {
     }
   });
 
+  // Update Rules
+  socket.on('updateRules', ({ roomId, playerId, rules }, callback) => {
+    const room = rooms.get(roomId);
+    if (!room) return callback?.({ error: 'Room not found' });
+
+    const player = room.state.players.find(p => p.id === playerId);
+    if (!player || !player.isHost) {
+      return callback?.({ error: 'Only the host can modify gameplay rules' });
+    }
+
+    try {
+      room.updateRules(rules);
+      broadcastGameState(roomId);
+      callback?.({ success: true });
+    } catch (err: any) {
+      callback?.({ error: err.message });
+    }
+  });
+
   // Start Game
   socket.on('startGame', ({ roomId, playerId }, callback) => {
     const room = rooms.get(roomId);

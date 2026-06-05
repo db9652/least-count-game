@@ -1,13 +1,13 @@
 # Least Count - Card Game Rules
 
-Welcome to **Least Count**! Here are the rules for this real-time multiplayer card game.
+Welcome to **Least Count**! Here are the rules for this real-time multiplayer card game. Note that the game host can customize these parameters prior to starting the game via the **Modify Gameplay** settings in the Lobby.
 
 ---
 
 ## 🎯 1. Objective
 The goal is to end each round with the **lowest total points** in your hand. 
 * Players accumulate points across rounds.
-* If a player's cumulative score reaches **200 points**, they are eliminated.
+* If a player's cumulative score reaches the **Elimination Limit** (default: **200 points**, customizable), they are eliminated.
 * The player with the lowest score at the end of the game wins!
 
 ---
@@ -32,20 +32,20 @@ The game uses a **Discard First, Draw Next** turn dynamic:
 ---
 
 ## ⚡ 4. Skip Draw Rule
-You can reduce your hand size below 7 cards by skipping the draw phase:
+You can reduce your hand size below the initial starting hand (default: **7 cards**, customizable) by skipping the draw phase:
 * If the card you discard **matches the exact rank** of the card on top of the Discard Pile *at the start of your turn*, you skip the draw phase.
 * **Note on Face Cards**: Face cards must match exactly (e.g., if a Queen is on top, you can only skip if you discard a Queen, not a Jack or King, even though they all count as 10 points).
 
 ---
 
 ## 📢 5. Declaring a "Show"
-At the **very start of your turn** (before discarding or drawing), if your total hand value is **10 points or less**, you can declare a **"Show"** to end the round.
+At the **very start of your turn** (before discarding or drawing), if your total hand value is **less than or equal to the Show Threshold** (default: **10 points**, customizable), you can declare a **"Show"** to end the round.
 
 ### **Resolution & Scoring**:
 * **Successful Show** (You have the strictly lowest hand value):
   * **You get**: `0 points`
-  * **Opponents get**: Their hand total points (capped at a maximum of `25 points`).
+  * **Opponents get**: Their hand total points (capped at a maximum of the **Penalty/Cap Score**, default: **25 points**, customizable).
 * **Wrong Show** (An opponent has an equal or lower hand value than yours):
-  * **You get**: A `+25 point penalty`.
+  * **You get**: A penalty equal to the **Penalty/Cap Score** (default: **+25 points**, customizable).
   * **Opponent(s) with the actual lowest hand get**: `0 points`.
-  * **All other players get**: Their hand total points (capped at a maximum of `25 points`).
+  * **All other players get**: Their hand total points (capped at a maximum of the **Penalty/Cap Score**, default: **25 points**, customizable).

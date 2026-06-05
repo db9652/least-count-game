@@ -267,6 +267,7 @@ export default function App() {
           myId={gameState.myId}
           players={gameState.players}
           onStartGame={handleStartGame}
+          rules={gameState.rules}
         />
       </div>
     );
@@ -313,6 +314,7 @@ export default function App() {
           onRestart={handleRestartGame}
           onLeave={handleLeaveRoom}
           onNextRound={handleNextRound}
+          rules={gameState.rules}
         />
       )}
     </div>

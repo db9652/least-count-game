@@ -28,7 +28,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({
     currentTurnDiscards,
     drawPileCount,
     roundNumber,
-    history
+    history,
+    rules
   } = gameState;
 
   // Selected cards state
@@ -58,7 +59,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
     e.dataTransfer.effectAllowed = 'move';
   };
 
-  const handleDragOver = (e: React.DragEvent, index: number) => {
+  const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
   };
@@ -158,7 +159,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   };
 
   const handleShowClick = () => {
-    if (!isMyTurn || turnPhase !== 'DISCARD' || myHandValue > 10) return;
+    if (!isMyTurn || turnPhase !== 'DISCARD' || myHandValue > rules.showThreshold) return;
     onDeclareShow();
   };
 
@@ -290,7 +291,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           <div className="hand-header">
             <div className="hand-info">
               <h3>Your Hand</h3>
-              <span>Total value: <strong>{myHandValue} pts</strong> (Threshold to Show is 10)</span>
+              <span>Total value: <strong>{myHandValue} pts</strong> (Threshold to Show is {rules.showThreshold})</span>
             </div>
             
             <div className="hand-actions">
@@ -305,9 +306,9 @@ export const GameBoard: React.FC<GameBoardProps> = ({
                   </button>
                   <button 
                     className="btn btn-danger"
-                    disabled={myHandValue > 10}
+                    disabled={myHandValue > rules.showThreshold}
                     onClick={handleShowClick}
-                    title={myHandValue > 10 ? "Hand must be 10 or less to Declare Show!" : "Declare Show"}
+                    title={myHandValue > rules.showThreshold ? `Hand must be ${rules.showThreshold} or less to Declare Show!` : "Declare Show"}
                   >
                     Declare Show
                   </button>
@@ -328,7 +329,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
                 key={card.id}
                 draggable
                 onDragStart={(e) => handleDragStart(e, index)}
-                onDragOver={(e) => handleDragOver(e, index)}
+                onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, index)}
                 onDragEnd={handleDragEnd}
                 className={`draggable-card-wrapper ${draggedIndex === index ? 'dragging' : ''}`}
@@ -405,8 +406,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({
             <div className="rules-modal-body">
               <section className="rules-section">
                 <h3>🎯 Objective & Setup</h3>
-                <p>The goal is to end the round with the <strong>lowest card points</strong> in your hand. Players accumulate points; crossing <strong>200 points</strong> eliminates you.</p>
-                <p>Each player is dealt exactly <strong>7 cards</strong> to start.</p>
+                <p>The goal is to end the round with the <strong>lowest card points</strong> in your hand. Players accumulate points; crossing <strong>{rules.eliminationScore} points</strong> eliminates you.</p>
+                <p>Each player is dealt exactly <strong>{rules.cardsPerPlayer} cards</strong> to start.</p>
               </section>
 
               <section className="rules-section">
@@ -434,10 +435,10 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
               <section className="rules-section">
                 <h3>📢 Declaring "Show"</h3>
-                <p>At the start of your turn, if your hand is <strong>10 points or less</strong>, you can declare Show.</p>
+                <p>At the start of your turn, if your hand is <strong>{rules.showThreshold} points or less</strong>, you can declare Show.</p>
                 <ul className="rules-list">
-                  <li><strong>Successful Show</strong> (You have strictly the lowest hand): You get <code>0 points</code>; others get their hand value (capped at <code>25 points</code>).</li>
-                  <li><strong>Wrong Show</strong> (Someone has lower or equal hand): You get a <code>+25 penalty</code>; actual lowest gets <code>0 points</code>; others get hand value (capped at <code>25 points</code>).</li>
+                  <li><strong>Successful Show</strong> (You have strictly the lowest hand): You get <code>0 points</code>; others get their hand value (capped at <code>{rules.penaltyScore} points</code>).</li>
+                  <li><strong>Wrong Show</strong> (Someone has lower or equal hand): You get a <code>+{rules.penaltyScore} penalty</code>; actual lowest gets <code>0 points</code>; others get hand value (capped at <code>{rules.penaltyScore} points</code>).</li>
                 </ul>
               </section>
             </div>
