@@ -7,6 +7,7 @@ export default defineConfig({
   base: '/least-count/',
   server: {
     host: true,
-    port: 5173
+    port: 5173,
+    allowedHosts: ['games.chintuladdu.online']
   }
 })
