@@ -161,6 +161,27 @@ io.on('connection', (socket) => {
     }
   });
 
+  // Send Chat Message
+  socket.on('sendChatMessage', ({ roomId, playerId, text }, callback) => {
+    const room = rooms.get(roomId);
+    if (!room) return callback?.({ error: 'Room not found' });
+
+    const player = room.state.players.find(p => p.id === playerId);
+    if (!player) return callback?.({ error: 'Player not found' });
+
+    if (!text || text.trim() === '') {
+      return callback?.({ error: 'Message text is required' });
+    }
+
+    try {
+      room.addChatMessage(player.name, text.trim());
+      broadcastGameState(roomId);
+      callback?.({ success: true });
+    } catch (err: any) {
+      callback?.({ error: err.message });
+    }
+  });
+
   // Start Game
   socket.on('startGame', ({ roomId, playerId }, callback) => {
     const room = rooms.get(roomId);

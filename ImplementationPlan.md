@@ -92,3 +92,26 @@ To keep the server memory footprint small while being resilient to brief player 
 
 ### 5.2 Server-to-Client Events
 * `gameStateUpdate`: Broadcasts the updated client-specific state payload to all connected clients in a lobby.
+
+---
+
+## 6. Real-Time Live Chat (3-Column Layout)
+To enable real-time coordination during gameplay, players can communicate using a live chat panel visible inside the active game window.
+
+### 6.1 Layout Upgrades
+* The screen layout uses a balanced **3-column structure** to distribute components symmetrically across the viewport:
+  1. **Left Column**: Live chat window panel (280px wide) containing message history and text input.
+  2. **Middle Column**: Centered game felt table (flexible width).
+  3. **Right Column**: Leaderboard, history log, and gameplay rules button (300px wide).
+* Responsiveness: Under viewports less than `1024px` wide, the panels stack vertically with constrained max-height limits to ensure fluid scrolling without components overlapping.
+
+### 6.2 Chat Logic & Communication
+* **Data Flow**: Chat messages are integrated directly into the `GameRoomState` and `ClientGameState` objects via the Socket.io connection.
+* **Backend Processing**:
+  * Emits `sendChatMessage` containing `{ roomId, playerId, text }`.
+  * The server checks if the player exists in the room, validates that the text is non-empty, and calls `addChatMessage(senderName, text)`.
+  * The server limits the local room history to the last `50` messages to prevent memory creep.
+  * The state update broadcasts to all clients automatically using the existing `gameStateUpdate` event.
+* **Frontend Rendering**:
+  * Displays user's messages on the right (colored green) and other players' messages on the left (colored gray).
+  * Automatically scrolls to the bottom of the chat container when new messages arrive.

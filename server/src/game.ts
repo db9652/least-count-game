@@ -1,4 +1,4 @@
-import { Card, Player, GameRoomState, ClientGameState, TurnPhase, GameRules } from './types';
+import { Card, Player, GameRoomState, ClientGameState, TurnPhase, GameRules, ChatMessage } from './types';
 
 // Helper to generate a unique card ID
 let cardIdCounter = 0;
@@ -81,7 +81,8 @@ export class GameRoom {
         cardsPerPlayer: 7,
         showThreshold: 10,
         penaltyScore: 25
-      }
+      },
+      messages: []
     };
   }
 
@@ -90,6 +91,19 @@ export class GameRoom {
       ...this.state.rules,
       ...rules
     };
+  }
+
+  public addChatMessage(senderName: string, text: string): void {
+    const message: ChatMessage = {
+      id: `msg_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+      senderName,
+      text,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+    this.state.messages.push(message);
+    if (this.state.messages.length > 50) {
+      this.state.messages.shift();
+    }
   }
 
   public addPlayer(id: string, name: string, socketId: string): Player {
@@ -529,7 +543,8 @@ export class GameRoom {
       winnerId: this.state.winnerId,
       roundNumber: this.state.roundNumber,
       history: this.state.history.slice(-20), // send last 20 history items
-      rules: this.state.rules
+      rules: this.state.rules,
+      messages: this.state.messages
     };
   }
 }

@@ -121,6 +121,15 @@ export default function App() {
     });
   };
 
+  const handleSendMessage = (text: string) => {
+    if (!gameState) return;
+    socket.emit('sendChatMessage', { roomId: gameState.roomId, playerId: gameState.myId, text }, (response: any) => {
+      if (response && response.error) {
+        setError(response.error);
+      }
+    });
+  };
+
   const handleNextRound = () => {
     if (!gameState) return;
     socket.emit('nextRound', { roomId: gameState.roomId, playerId: gameState.myId }, (response: any) => {
@@ -352,6 +361,7 @@ export default function App() {
         onDraw={handleDraw}
         onDeclareShow={handleDeclareShow}
         onLeave={handleLeaveRoom}
+        onSendMessage={handleSendMessage}
       />
 
       {/* Scoreboard Overlay Modal */}

@@ -19,6 +19,13 @@ export interface Player {
 
 export type TurnPhase = 'DISCARD' | 'DRAW' | 'ROUND_END';
 
+export interface ChatMessage {
+  id: string;
+  senderName: string;
+  text: string;
+  timestamp: string;
+}
+
 export interface GameRules {
   eliminationScore: number;
   cardsPerPlayer: number;
@@ -42,6 +49,7 @@ export interface GameRoomState {
   prevTopDiscardBeforeTurn: Card | null;
   skipDrawApplied: boolean;
   rules: GameRules;
+  messages: ChatMessage[];
 }
 
 // Personalized game state sent to a specific player
@@ -73,4 +81,5 @@ export interface ClientGameState {
   roundNumber: number;
   history: string[];
   rules: GameRules;
+  messages: ChatMessage[];
 }

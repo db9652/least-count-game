@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card } from './Card';
 import type { Card as CardType, ClientGameState } from '../../../server/src/types';
-import { AlertCircle, BookOpen, X } from 'lucide-react';
+import { AlertCircle, BookOpen, X, Send, MessageSquare } from 'lucide-react';
 
 interface GameBoardProps {
   gameState: ClientGameState;
@@ -9,6 +9,7 @@ interface GameBoardProps {
   onDraw: (source: 'drawPile' | 'discardPile') => void;
   onDeclareShow: () => void;
   onLeave: () => void;
+  onSendMessage: (text: string) => void;
 }
 
 export const GameBoard: React.FC<GameBoardProps> = ({
@@ -16,7 +17,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   onDiscard,
   onDraw,
   onDeclareShow,
-  onLeave
+  onLeave,
+  onSendMessage
 }) => {
   const {
     myId,
@@ -29,7 +31,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({
     drawPileCount,
     roundNumber,
     history,
-    rules
+    rules,
+    messages
   } = gameState;
 
   // Selected cards state
@@ -41,6 +44,15 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
   // Rules modal state
   const [isRulesOpen, setIsRulesOpen] = useState(false);
+
+  // Chat input state
+  const [chatInput, setChatInput] = useState('');
+  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+
+  // Scroll to bottom when new messages arrive
+  React.useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   // Sync orderedHand with myHand when myHand changes
   React.useEffect(() => {
@@ -167,9 +179,70 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   const selectedCards = myHand.filter(c => selectedCardIds.includes(c.id));
   const isSelectionValid = selectedCards.length > 0 && selectedCards.every(c => c.rank === selectedCards[0].rank);
 
+  const handleChatSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+    onSendMessage(chatInput.trim());
+    setChatInput('');
+  };
+
   return (
     <div className="game-table-container">
-      {/* Game Board (Left) */}
+      {/* Live Chat Panel (Left) */}
+      <div className="chat-panel">
+        <h3>
+          <MessageSquare size={18} />
+          Live Chat
+        </h3>
+        
+        <div className="chat-messages-container">
+          {messages && messages.length > 0 ? (
+            messages.map((msg) => {
+              const isSelf = msg.senderName === (players.find(p => p.id === myId)?.name || '');
+              return (
+                <div 
+                  key={msg.id} 
+                  className={`chat-message-item ${isSelf ? 'self' : 'other'}`}
+                >
+                  <div className="chat-message-header">
+                    <span className="chat-message-sender">{msg.senderName}</span>
+                    <span className="chat-message-timestamp">{msg.timestamp}</span>
+                  </div>
+                  <div className="chat-message-bubble">
+                    {msg.text}
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-secondary)', fontSize: '0.85rem', textAlign: 'center', gap: '0.5rem', opacity: 0.7 }}>
+              <MessageSquare size={24} style={{ opacity: 0.5 }} />
+              <span>No messages yet.<br />Say hello to start the chat!</span>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        <form onSubmit={handleChatSubmit} className="chat-input-form">
+          <input
+            type="text"
+            className="chat-input"
+            placeholder="Type a message..."
+            value={chatInput}
+            onChange={(e) => setChatInput(e.target.value)}
+            maxLength={100}
+          />
+          <button 
+            type="submit" 
+            className="chat-send-btn"
+            disabled={!chatInput.trim()}
+          >
+            <Send size={14} />
+          </button>
+        </form>
+      </div>
+
+      {/* Game Board (Middle) */}
       <div className="game-area">
         {/* Top Info Bar */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 10 }}>
