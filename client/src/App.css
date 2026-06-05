@@ -800,3 +800,116 @@ body {
   transform: scale(0.95);
   box-shadow: none;
 }
+
+/* Gameplay Rules Modal */
+.rules-modal-content {
+  max-width: 600px;
+  width: 90%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  background: #1e293b;
+  border-radius: 1rem;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.rules-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.rules-modal-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, #34d399, #10b981);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.rules-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.rules-close-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.rules-modal-body {
+  text-align: left;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Scrollbar styles for modal body */
+.rules-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.rules-modal-body::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.rules-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.rules-modal-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.rules-section h3 {
+  font-size: 1.05rem;
+  color: var(--primary);
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+
+.rules-section p {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  line-height: 1.45;
+  margin-bottom: 0.4rem;
+}
+
+.rules-list {
+  margin-left: 1.25rem;
+  margin-bottom: 0.4rem;
+  list-style-type: disc;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.rules-list li {
+  margin-bottom: 0.25rem;
+}
+
+.rules-list code {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.1rem 0.3rem;
+  border-radius: 0.25rem;
+  font-family: monospace;
+  font-size: 0.85rem;
+}

@@ -22,10 +22,10 @@ export default function App() {
     socket.on('connect', () => {
       setConnected(true);
       setError(null);
-      
+
       const savedRoomId = localStorage.getItem('least_count_room_id');
       const savedPlayerId = localStorage.getItem('least_count_player_id');
-      
+
       if (savedRoomId && savedPlayerId) {
         socket.emit('syncState', { roomId: savedRoomId, playerId: savedPlayerId }, (response: any) => {
           if (response.error) {
@@ -172,13 +172,13 @@ export default function App() {
             )}
 
             <div className="tabs-header">
-              <button 
+              <button
                 className={`tab-btn ${activeTab === 'create' ? 'active' : ''}`}
                 onClick={() => setActiveTab('create')}
               >
                 Create Room
               </button>
-              <button 
+              <button
                 className={`tab-btn ${activeTab === 'join' ? 'active' : ''}`}
                 onClick={() => setActiveTab('join')}
               >
@@ -189,10 +189,10 @@ export default function App() {
             <form onSubmit={activeTab === 'create' ? handleCreateRoom : handleJoinRoom}>
               <div className="form-group">
                 <label>Your Name</label>
-                <input 
-                  type="text" 
-                  className="form-input" 
-                  placeholder="Enter username" 
+                <input
+                  type="text"
+                  className="form-input"
+                  placeholder="Enter Your Name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   maxLength={12}
@@ -203,10 +203,10 @@ export default function App() {
               {activeTab === 'join' && (
                 <div className="form-group">
                   <label>Room Code</label>
-                  <input 
-                    type="text" 
-                    className="form-input" 
-                    placeholder="e.g. ABCD" 
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="e.g. ABCD"
                     value={joinCode}
                     onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                     maxLength={4}
@@ -215,9 +215,9 @@ export default function App() {
                 </div>
               )}
 
-              <button 
-                type="submit" 
-                className="btn btn-primary" 
+              <button
+                type="submit"
+                className="btn btn-primary"
                 style={{ width: '100%', justifyContent: 'center', marginTop: '1rem' }}
                 disabled={!connected}
               >
@@ -262,11 +262,11 @@ export default function App() {
           </div>
         )}
 
-        <Lobby 
-          roomId={gameState.roomId} 
-          myId={gameState.myId} 
-          players={gameState.players} 
-          onStartGame={handleStartGame} 
+        <Lobby
+          roomId={gameState.roomId}
+          myId={gameState.myId}
+          players={gameState.players}
+          onStartGame={handleStartGame}
         />
       </div>
     );
@@ -295,24 +295,24 @@ export default function App() {
         </div>
       )}
 
-      <GameBoard 
-        gameState={gameState} 
-        onDiscard={handleDiscard} 
-        onDraw={handleDraw} 
-        onDeclareShow={handleDeclareShow} 
-        onLeave={handleLeaveRoom} 
+      <GameBoard
+        gameState={gameState}
+        onDiscard={handleDiscard}
+        onDraw={handleDraw}
+        onDeclareShow={handleDeclareShow}
+        onLeave={handleLeaveRoom}
       />
 
       {/* Scoreboard Overlay Modal */}
       {(gameState.turnPhase === 'ROUND_END' || gameState.isGameOver) && (
-        <Scoreboard 
-          players={gameState.players} 
-          myId={gameState.myId} 
-          isGameOver={gameState.isGameOver} 
-          winnerId={gameState.winnerId} 
-          onRestart={handleRestartGame} 
-          onLeave={handleLeaveRoom} 
-          onNextRound={handleNextRound} 
+        <Scoreboard
+          players={gameState.players}
+          myId={gameState.myId}
+          isGameOver={gameState.isGameOver}
+          winnerId={gameState.winnerId}
+          onRestart={handleRestartGame}
+          onLeave={handleLeaveRoom}
+          onNextRound={handleNextRound}
         />
       )}
     </div>

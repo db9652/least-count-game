@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card } from './Card';
 import type { Card as CardType, ClientGameState } from '../../../server/src/types';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, BookOpen, X } from 'lucide-react';
 
 interface GameBoardProps {
   gameState: ClientGameState;
@@ -37,6 +37,9 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   // Ordered hand state for drag-and-drop
   const [orderedHand, setOrderedHand] = useState<CardType[]>([]);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
+  // Rules modal state
+  const [isRulesOpen, setIsRulesOpen] = useState(false);
 
   // Sync orderedHand with myHand when myHand changes
   React.useEffect(() => {
@@ -376,7 +379,71 @@ export const GameBoard: React.FC<GameBoardProps> = ({
             ))}
           </div>
         </div>
+
+        {/* Gameplay Rules Button */}
+        <button 
+          className="rules-btn btn btn-secondary" 
+          onClick={() => setIsRulesOpen(true)}
+          style={{ width: '100%', justifyContent: 'center', marginTop: 'auto', flexShrink: 0 }}
+        >
+          <BookOpen size={16} />
+          Gameplay Rules
+        </button>
       </div>
+
+      {/* Rules Modal Overlay */}
+      {isRulesOpen && (
+        <div className="modal-overlay rules-modal-overlay" onClick={() => setIsRulesOpen(false)}>
+          <div className="modal-content rules-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="rules-modal-header">
+              <h2>🃏 Least Count Rules</h2>
+              <button className="rules-close-btn" onClick={() => setIsRulesOpen(false)}>
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="rules-modal-body">
+              <section className="rules-section">
+                <h3>🎯 Objective & Setup</h3>
+                <p>The goal is to end the round with the <strong>lowest card points</strong> in your hand. Players accumulate points; crossing <strong>100 points</strong> eliminates you.</p>
+                <p>Each player is dealt exactly <strong>7 cards</strong> to start.</p>
+              </section>
+
+              <section className="rules-section">
+                <h3>🃏 Card Values</h3>
+                <ul className="rules-list">
+                  <li><strong>Joker:</strong> 0 points</li>
+                  <li><strong>Ace:</strong> 1 point</li>
+                  <li><strong>2 to 9:</strong> Face value</li>
+                  <li><strong>10, J, Q, K:</strong> 10 points each</li>
+                </ul>
+              </section>
+
+              <section className="rules-section">
+                <h3>🔄 Turn Flow</h3>
+                <ul className="rules-list">
+                  <li><strong>1. Discard Phase:</strong> Discard at least one card. You can discard multiple cards of the <em>exact same rank</em> (e.g. two 8s).</li>
+                  <li><strong>2. Draw Phase:</strong> Draw one card from the Closed Deck or Discard Pile.</li>
+                </ul>
+              </section>
+
+              <section className="rules-section">
+                <h3>⚡ Skip Draw Rule</h3>
+                <p>If you discard cards matching the <strong>exact rank</strong> of the top card of the Discard Pile at the start of your turn, you skip the draw phase, reducing your hand size.</p>
+              </section>
+
+              <section className="rules-section">
+                <h3>📢 Declaring "Show"</h3>
+                <p>At the start of your turn, if your hand is <strong>10 points or less</strong>, you can declare Show.</p>
+                <ul className="rules-list">
+                  <li><strong>Successful Show</strong> (You have strictly the lowest hand): You get <code>0 points</code>; others get their hand value (capped at <code>25 points</code>).</li>
+                  <li><strong>Wrong Show</strong> (Someone has lower or equal hand): You get a <code>+25 penalty</code>; actual lowest gets <code>0 points</code>; others get hand value (capped at <code>25 points</code>).</li>
+                </ul>
+              </section>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
