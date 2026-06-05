@@ -156,36 +156,36 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   const getOpponentStyle = (index: number, totalOpponents: number) => {
     // We place players in a semi-circular arc around the top and sides of the board
     if (totalOpponents === 1) {
-      return { top: '15%', left: '50%' };
+      return { top: '10%', left: '50%' };
     }
     if (totalOpponents === 2) {
       return [
-        { top: '25%', left: '15%' },
-        { top: '25%', left: '85%' }
+        { top: '20%', left: '15%' },
+        { top: '20%', left: '85%' }
       ][index];
     }
     if (totalOpponents === 3) {
       return [
-        { top: '45%', left: '12%' },
-        { top: '15%', left: '50%' },
-        { top: '45%', left: '88%' }
+        { top: '40%', left: '12%' },
+        { top: '10%', left: '50%' },
+        { top: '40%', left: '88%' }
       ][index];
     }
     if (totalOpponents === 4) {
       return [
-        { top: '50%', left: '12%' },
-        { top: '20%', left: '25%' },
-        { top: '20%', left: '75%' },
-        { top: '50%', left: '88%' }
+        { top: '45%', left: '12%' },
+        { top: '15%', left: '25%' },
+        { top: '15%', left: '75%' },
+        { top: '45%', left: '88%' }
       ][index];
     }
     // For 5 opponents
     return [
-      { top: '50%', left: '10%' },
-      { top: '25%', left: '25%' },
-      { top: '15%', left: '50%' },
-      { top: '25%', left: '75%' },
-      { top: '50%', left: '90%' }
+      { top: '45%', left: '10%' },
+      { top: '20%', left: '25%' },
+      { top: '10%', left: '50%' },
+      { top: '20%', left: '75%' },
+      { top: '45%', left: '90%' }
     ][index];
   };
 

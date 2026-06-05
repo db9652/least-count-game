@@ -688,6 +688,7 @@ body {
 
 .game-board {
   flex: 1;
+  min-height: 380px;
   background: rgba(0, 0, 0, 0.15);
   border-radius: 2rem;
   position: relative;
