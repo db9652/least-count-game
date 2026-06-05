@@ -69,9 +69,17 @@ We allow the lobby host to customize four game parameters before starting the ga
 
 ---
 
-## 4. Communication Protocols & Event Catalog
+## 4. Delayed Room Deletion Cleanup Timers
+To keep the server memory footprint small while being resilient to brief player disconnects, rooms are cleaned up automatically using scheduled timeouts:
+* **Lobby Cleanup (Game not started)**: If a room becomes completely empty (0 players) prior to starting a game, a 5-minute cleanup timer is set to delete the room from the server memory.
+* **Game Cleanup (Game started)**: If everyone disconnects from an ongoing game, a 1-hour cleanup timer is set to delete the room from the server memory.
+* **Timer Cancellation**: If any player joins or reconnects to the room before the cleanup timer expires, the timer is immediately cancelled and deleted, restoring the session.
 
-### 4.1 Client-to-Server Events
+---
+
+## 5. Communication Protocols & Event Catalog
+
+### 5.1 Client-to-Server Events
 * `createRoom({ name }, callback)`: Instantiates a new lobby and returns the player and room context.
 * `joinRoom({ roomId, name }, callback)`: Connects a player to an existing room code, supporting reconnections.
 * `updateRules({ roomId, playerId, rules }, callback)`: Updates customizable rules (host only). Broadcasts updated lobby state to all players.
@@ -82,5 +90,5 @@ We allow the lobby host to customize four game parameters before starting the ga
 * `nextRound({ roomId, playerId })`: Resets round parameters and deals new hands (runs only if triggered by the host).
 * `syncState({ roomId, playerId }, callback)`: Synchronizes state variables during client page refreshes or reconnection events.
 
-### 4.2 Server-to-Client Events
+### 5.2 Server-to-Client Events
 * `gameStateUpdate`: Broadcasts the updated client-specific state payload to all connected clients in a lobby.

@@ -25,6 +25,18 @@ const rooms = new Map<string, GameRoom>();
 // SocketId -> { roomId, playerId }
 const socketToPlayerMap = new Map<string, { roomId: string; playerId: string }>();
 
+// Map to track room deletion timers
+const roomCleanupTimers = new Map<string, NodeJS.Timeout>();
+
+function cancelCleanupTimer(roomId: string) {
+  const timer = roomCleanupTimers.get(roomId);
+  if (timer) {
+    clearTimeout(timer);
+    roomCleanupTimers.delete(roomId);
+    console.log(`Cleanup timer cancelled for room ${roomId}`);
+  }
+}
+
 // Generate a random 4-letter room code
 function generateRoomCode(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -94,6 +106,9 @@ io.on('connection', (socket) => {
       if (!room) {
         return callback({ error: 'Room not found' });
       }
+
+      // Cancel any pending cleanup timer for this room
+      cancelCleanupTimer(cleanRoomId);
 
       // Check if player is reconnecting
       // Search by name in existing player list
@@ -226,6 +241,9 @@ io.on('connection', (socket) => {
     const room = rooms.get(roomId);
     if (!room) return callback?.({ error: 'Room not found' });
 
+    // Cancel any pending cleanup timer for this room
+    cancelCleanupTimer(roomId);
+
     const player = room.state.players.find(p => p.id === playerId);
     if (!player) return callback?.({ error: 'Player not found in this room' });
 
@@ -248,14 +266,27 @@ io.on('connection', (socket) => {
       if (room) {
         room.removePlayer(socket.id);
         
-        // If all players left, delete the room
         const allDisconnected = room.state.players.every(p => p.socketId === '');
-        if (room.state.players.length === 0 || allDisconnected) {
-          // Keep it for a few minutes or delete if empty
-          if (room.state.players.length === 0) {
+        if (room.state.players.length === 0) {
+          // Case A: Lobby/Game hasn't started and room is empty. Delete after 5 minutes.
+          cancelCleanupTimer(roomId);
+          const timer = setTimeout(() => {
             rooms.delete(roomId);
-            console.log(`Room ${roomId} deleted because it was empty.`);
-          }
+            roomCleanupTimers.delete(roomId);
+            console.log(`Room ${roomId} deleted after 5 minutes of being empty.`);
+          }, 5 * 60 * 1000);
+          roomCleanupTimers.set(roomId, timer);
+          console.log(`Scheduled 5-minute cleanup timer for empty room ${roomId}`);
+        } else if (allDisconnected && room.state.gameStarted) {
+          // Case B: Game started and everyone disconnected. Delete after 1 hour.
+          cancelCleanupTimer(roomId);
+          const timer = setTimeout(() => {
+            rooms.delete(roomId);
+            roomCleanupTimers.delete(roomId);
+            console.log(`Room ${roomId} deleted after 1 hour of all players being disconnected.`);
+          }, 60 * 60 * 1000);
+          roomCleanupTimers.set(roomId, timer);
+          console.log(`Scheduled 1-hour cleanup timer for disconnected room ${roomId}`);
         } else {
           broadcastGameState(roomId);
         }
