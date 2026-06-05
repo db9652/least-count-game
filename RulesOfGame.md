@@ -7,7 +7,7 @@ Welcome to **Least Count**! Here are the rules for this real-time multiplayer ca
 ## 🎯 1. Objective
 The goal is to end each round with the **lowest total points** in your hand. 
 * Players accumulate points across rounds.
-* If a player's cumulative score reaches **100 points**, they are eliminated.
+* If a player's cumulative score reaches **200 points**, they are eliminated.
 * The player with the lowest score at the end of the game wins!
 
 ---

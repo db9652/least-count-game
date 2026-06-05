@@ -6,7 +6,7 @@ A beautiful, real-time, remote multiplayer implementation of the popular card ga
 
 ## 🎮 Game Overview & Rules
 
-In **Least Count**, the objective is to end the round with the lowest total card points in your hand. Players accumulate points across rounds, and anyone crossing the **100-point threshold** is eliminated. The player with the lowest score at the end wins!
+In **Least Count**, the objective is to end the round with the lowest total card points in your hand. Players accumulate points across rounds, and anyone crossing the **200-point threshold** is eliminated. The player with the lowest score at the end wins!
 
 ### **Our Custom Ruleset:**
 1. **Starting Hand**: Each player receives exactly **7 cards**.

@@ -113,7 +113,7 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({
                     <td style={{ padding: '0.75rem 0.5rem', textAlign: 'right', color: p.roundScore === 0 ? '#34d399' : p.roundScore >= 25 ? '#ef4444' : 'var(--text-primary)' }}>
                       {p.roundScore === 0 ? '0 (Show)' : p.roundScore >= 25 ? `+25 (Wrong)` : `+${p.roundScore}`}
                     </td>
-                    <td style={{ padding: '0.75rem 0.5rem', textAlign: 'right', fontSize: '1rem', color: p.score >= 100 ? '#ef4444' : 'var(--text-primary)' }}>
+                    <td style={{ padding: '0.75rem 0.5rem', textAlign: 'right', fontSize: '1rem', color: p.score >= 200 ? '#ef4444' : 'var(--text-primary)' }}>
                       {p.score} pts
                     </td>
                   </tr>

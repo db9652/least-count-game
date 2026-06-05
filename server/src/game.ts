@@ -386,7 +386,7 @@ export class GameRoom {
     });
 
     // Check for Game Over / Elimination
-    const ELIMINATION_SCORE = 100;
+    const ELIMINATION_SCORE = 200;
     const anyEliminated = this.state.players.some(p => p.score >= ELIMINATION_SCORE);
 
     this.state.turnPhase = 'ROUND_END';

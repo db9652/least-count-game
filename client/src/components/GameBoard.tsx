@@ -405,7 +405,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
             <div className="rules-modal-body">
               <section className="rules-section">
                 <h3>🎯 Objective & Setup</h3>
-                <p>The goal is to end the round with the <strong>lowest card points</strong> in your hand. Players accumulate points; crossing <strong>100 points</strong> eliminates you.</p>
+                <p>The goal is to end the round with the <strong>lowest card points</strong> in your hand. Players accumulate points; crossing <strong>200 points</strong> eliminates you.</p>
                 <p>Each player is dealt exactly <strong>7 cards</strong> to start.</p>
               </section>
 
