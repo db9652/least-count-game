@@ -517,7 +517,7 @@ body {
 }
 
 .chat-messages-container {
-  max-height: 300px;
+  max-height: 540px;
   overflow-y: auto;
   padding-right: 0.4rem;
   display: flex;
