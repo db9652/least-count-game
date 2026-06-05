@@ -167,8 +167,8 @@ export const Card: React.FC<CardProps> = ({
                     key={idx} 
                     className="card-grid-symbol"
                     style={{ 
-                      gridColumn: pos.col, 
-                      gridRow: pos.row,
+                      gridColumn: String(pos.col), 
+                      gridRow: String(pos.row),
                       fontSize: card.rank === 'A' ? '2.2rem' : '0.8rem'
                     }}
                   >

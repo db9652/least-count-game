@@ -1,14 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --primary: #10b981; /* Emerald green */
+  --primary: #10b981;
+  /* Emerald green */
   --primary-glow: rgba(16, 185, 129, 0.4);
   --danger: #ef4444;
   --danger-glow: rgba(239, 68, 68, 0.4);
   --warning: #f59e0b;
-  --bg-dark: #0f172a; /* Slate 900 */
-  --bg-felt: radial-gradient(circle at center, #064e3b, #022c22); /* Classic deep felt green */
-  --card-bg: rgba(30, 41, 59, 0.7); /* Slate 800 with transparency */
+  --bg-dark: #0f172a;
+  /* Slate 900 */
+  --bg-felt: radial-gradient(circle at center, #064e3b, #022c22);
+  /* Classic deep felt green */
+  --card-bg: rgba(30, 41, 59, 0.7);
+  /* Slate 800 with transparency */
   --card-border: rgba(255, 255, 255, 0.08);
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
@@ -357,7 +361,7 @@ body {
   backface-visibility: hidden;
   border-radius: 0.5rem;
   border: 1.5px solid #d1d5db;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
 
 .card-front {
@@ -380,13 +384,11 @@ body {
 }
 
 .card-back {
-  background: repeating-linear-gradient(
-    45deg,
-    #1e293b,
-    #1e293b 10px,
-    #0f172a 10px,
-    #0f172a 20px
-  );
+  background: repeating-linear-gradient(45deg,
+      #1e293b,
+      #1e293b 10px,
+      #0f172a 10px,
+      #0f172a 20px);
   border: 2px solid #3b82f6;
   transform: rotateY(180deg);
   display: flex;
@@ -416,6 +418,7 @@ body {
   flex: 1;
   width: 100%;
   overflow: hidden;
+  min-height: 0;
 }
 
 .card-grid-layout {
@@ -528,7 +531,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   transition: all 0.3s;
 }
 
@@ -548,7 +551,7 @@ body {
   align-items: center;
   font-weight: 700;
   font-size: 0.9rem;
-  border: 2px solid rgba(255,255,255,0.1);
+  border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .opponent-card.active-turn .opponent-avatar {
@@ -592,7 +595,7 @@ body {
   width: 90px;
   height: 130px;
   border-radius: 0.6rem;
-  border: 2px dashed rgba(255,255,255,0.2);
+  border: 2px dashed rgba(255, 255, 255, 0.2);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -630,7 +633,7 @@ body {
   flex-direction: column;
   gap: 1rem;
   z-index: 10;
-  box-shadow: 0 -5px 25px rgba(0,0,0,0.3);
+  box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.3);
 }
 
 .hand-header {
@@ -711,7 +714,7 @@ body {
   background: rgba(0, 0, 0, 0.2);
   padding: 0.75rem;
   border-radius: 0.5rem;
-  max-height: 420px;
+  max-height: 500px;
 }
 
 .history-item {
@@ -725,6 +728,7 @@ body {
   from {
     box-shadow: 0 0 5px var(--primary-glow);
   }
+
   to {
     box-shadow: 0 0 15px var(--primary);
   }
