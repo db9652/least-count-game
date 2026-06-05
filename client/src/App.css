@@ -865,9 +865,25 @@ body {
 .cards-container {
   display: flex;
   justify-content: center;
-  gap: 1rem;
-  min-height: 120px;
+  align-items: flex-start;
+  gap: 0.5rem;
   padding-top: 10px;
+  overflow: hidden;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+/* Responsive hand cards — scale down to fit container */
+.cards-container .draggable-card-wrapper {
+  flex: 0 1 80px;
+  min-width: 40px;
+  max-width: 80px;
+}
+
+.cards-container .card-wrapper {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2 / 3;
 }
 
 /* Side Panel: Leaderboard & History Log */
@@ -1051,6 +1067,8 @@ body {
 .draggable-card-wrapper {
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
+  flex-shrink: 1;
+  min-width: 0;
 }
 
 .draggable-card-wrapper.dragging {
