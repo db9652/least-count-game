@@ -64,14 +64,14 @@ export const Card: React.FC<CardProps> = ({
             <>
               <div className="card-front-top">
                 <span>★</span>
-                <span>🃏</span>
+                <span>★</span>
               </div>
               <div className="card-front-center">
                 <span className="joker-text">Joker</span>
               </div>
               <div className="card-front-bottom">
                 <span>★</span>
-                <span>🃏</span>
+                <span>★</span>
               </div>
             </>
           ) : (

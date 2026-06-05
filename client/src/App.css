@@ -411,7 +411,7 @@ body {
   display: flex;
   justify-content: space-between;
   font-weight: 700;
-  font-size: 15cqi;
+  font-size: 28cqi;
   line-height: 1;
 }
 
@@ -428,7 +428,7 @@ body {
   display: flex;
   justify-content: space-between;
   font-weight: 700;
-  font-size: 15cqi;
+  font-size: 28cqi;
   line-height: 1;
   transform: rotate(180deg);
 }
