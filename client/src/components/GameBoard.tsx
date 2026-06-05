@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card } from './Card';
 import type { Card as CardType, ClientGameState } from '../../../server/src/types';
-import { Play, RotateCcw, AlertCircle, MessageSquare } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 
 interface GameBoardProps {
   gameState: ClientGameState;
@@ -24,7 +24,6 @@ export const GameBoard: React.FC<GameBoardProps> = ({
     myHand,
     currentTurnId,
     turnPhase,
-    topDiscardCard,
     prevTopDiscardCard,
     currentTurnDiscards,
     drawPileCount,
@@ -35,8 +34,49 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   // Selected cards state
   const [selectedCardIds, setSelectedCardIds] = useState<string[]>([]);
 
+  // Ordered hand state for drag-and-drop
+  const [orderedHand, setOrderedHand] = useState<CardType[]>([]);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
+  // Sync orderedHand with myHand when myHand changes
+  React.useEffect(() => {
+    setOrderedHand(prev => {
+      const myHandMap = new Map(myHand.map(c => [c.id, c]));
+      const updatedOrder = prev.filter(c => myHandMap.has(c.id));
+      const orderedIds = new Set(updatedOrder.map(c => c.id));
+      const newCards = myHand.filter(c => !orderedIds.has(c.id));
+      const finalHand = [...updatedOrder, ...newCards];
+      return finalHand.map(c => myHandMap.get(c.id)!);
+    });
+  }, [myHand]);
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = (e: React.DragEvent, targetIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === targetIndex) return;
+
+    setOrderedHand(prev => {
+      const result = [...prev];
+      const [removed] = result.splice(draggedIndex, 1);
+      result.splice(targetIndex, 0, removed);
+      return result;
+    });
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+  };
+
   // Find myself
-  const me = players.find(p => p.id === myId);
   const isMyTurn = currentTurnId === myId;
 
   // Calculate my hand value
@@ -280,14 +320,24 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           </div>
 
           <div className="cards-container">
-            {myHand.map((card) => (
-              <Card 
-                key={card.id} 
-                card={card} 
-                selected={selectedCardIds.includes(card.id)}
-                onClick={() => handleCardClick(card.id)}
-                disabled={!isMyTurn || turnPhase !== 'DISCARD'}
-              />
+            {orderedHand.map((card, index) => (
+              <div
+                key={card.id}
+                draggable
+                onDragStart={(e) => handleDragStart(e, index)}
+                onDragOver={(e) => handleDragOver(e, index)}
+                onDrop={(e) => handleDrop(e, index)}
+                onDragEnd={handleDragEnd}
+                className={`draggable-card-wrapper ${draggedIndex === index ? 'dragging' : ''}`}
+                style={{ cursor: draggedIndex === index ? 'grabbing' : 'grab' }}
+              >
+                <Card 
+                  card={card} 
+                  selected={selectedCardIds.includes(card.id)}
+                  onClick={() => handleCardClick(card.id)}
+                  disabled={!isMyTurn || turnPhase !== 'DISCARD'}
+                />
+              </div>
             ))}
           </div>
         </div>

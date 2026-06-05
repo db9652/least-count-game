@@ -788,3 +788,15 @@ body {
   z-index: 99;
   transform: translate(calc((var(--index) - (var(--total) - 1) / 2) * 22px), -10px) rotate(calc((var(--index) - (var(--total) - 1) / 2) * 5deg)) scale(1.05);
 }
+
+/* Draggable Hand Cards */
+.draggable-card-wrapper {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.draggable-card-wrapper.dragging {
+  opacity: 0.3;
+  transform: scale(0.95);
+  box-shadow: none;
+}
