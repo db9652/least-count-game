@@ -9,6 +9,7 @@ app.use(cors());
 
 const server = http.createServer(app);
 const io = new Server(server, {
+  path: '/least-count/socket.io',
   cors: {
     origin: '*', // Allow all origins for local dev
     methods: ['GET', 'POST']
@@ -97,8 +98,8 @@ io.on('connection', (socket) => {
       // Check if player is reconnecting
       // Search by name in existing player list
       let player = room.state.players.find(p => p.name.toLowerCase() === name.trim().toLowerCase());
-      let playerId = player ? player.id : null;
-
+      let playerId: string;
+ 
       if (!player) {
         if (room.state.gameStarted) {
           return callback({ error: 'Game has already started in this room!' });
@@ -110,6 +111,7 @@ io.on('connection', (socket) => {
         player = room.addPlayer(playerId, name.trim(), socket.id);
       } else {
         // Player reconnecting
+        playerId = player.id;
         player.socketId = socket.id;
         room.state.history.push(`${player.name} reconnected.`);
       }

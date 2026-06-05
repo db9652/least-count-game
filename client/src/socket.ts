@@ -11,6 +11,7 @@ const SOCKET_URL = port === '5173'
   : `${protocol}//${hostname}${port ? `:${port}` : ''}`;
 
 export const socket: Socket = io(SOCKET_URL, {
+  path: '/least-count/socket.io',
   autoConnect: false,
   reconnectionAttempts: 5,
   reconnectionDelay: 1000
