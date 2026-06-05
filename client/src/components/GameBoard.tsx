@@ -373,7 +373,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         <div className="panel-section" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <h3>History Log</h3>
           <div className="history-log">
-            {history.map((log, index) => (
+            {[...history].reverse().map((log, index) => (
               <div key={index} className="history-item">
                 {log}
               </div>
