@@ -56,6 +56,8 @@ export interface ClientGameState {
   currentTurnId: string | null;
   turnPhase: TurnPhase;
   topDiscardCard: Card | null;
+  prevTopDiscardCard: Card | null;
+  currentTurnDiscards: Card[];
   drawPileCount: number;
   gameStarted: boolean;
   isGameOver: boolean;

@@ -764,3 +764,27 @@ body {
   background-color: var(--danger);
   box-shadow: 0 0 8px var(--danger);
 }
+
+/* Fanned Cards for Current Discard */
+.fanned-cards-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 90px;
+  height: 130px;
+  margin-left: 10px;
+  overflow: visible;
+}
+
+.fanned-card-wrapper {
+  position: absolute;
+  transform: translate(calc((var(--index) - (var(--total) - 1) / 2) * 22px), 0) rotate(calc((var(--index) - (var(--total) - 1) / 2) * 5deg));
+  transition: all 0.2s ease-in-out;
+  z-index: calc(5 + var(--index));
+}
+
+.fanned-card-wrapper:hover {
+  z-index: 99;
+  transform: translate(calc((var(--index) - (var(--total) - 1) / 2) * 22px), -10px) rotate(calc((var(--index) - (var(--total) - 1) / 2) * 5deg)) scale(1.05);
+}

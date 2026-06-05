@@ -473,6 +473,22 @@ export class GameRoom {
     const me = this.state.players.find(p => p.id === playerId);
     const activePlayer = this.state.gameStarted ? this.getActivePlayer() : null;
 
+    let currentTurnDiscards: Card[] = [];
+    const prevTopDiscard = this.state.prevTopDiscardBeforeTurn;
+
+    if (this.state.gameStarted && this.state.turnPhase === 'DRAW') {
+      const idx = prevTopDiscard 
+        ? this.state.discardPile.findIndex(c => c.id === prevTopDiscard.id) 
+        : -1;
+      if (idx !== -1) {
+        currentTurnDiscards = this.state.discardPile.slice(idx + 1);
+      } else {
+        currentTurnDiscards = this.state.discardPile;
+      }
+    }
+
+    const prevTopDiscardCard = prevTopDiscard || (this.state.discardPile.length > 0 ? this.state.discardPile[this.state.discardPile.length - 1] : null);
+
     return {
       roomId: this.state.roomId,
       myId: playerId,
@@ -492,6 +508,8 @@ export class GameRoom {
       currentTurnId: this.state.gameStarted && activePlayer ? activePlayer.id : null,
       turnPhase: this.state.turnPhase,
       topDiscardCard: this.state.discardPile[this.state.discardPile.length - 1] || null,
+      prevTopDiscardCard,
+      currentTurnDiscards,
       drawPileCount: this.state.drawPile.length,
       gameStarted: this.state.gameStarted,
       isGameOver: this.state.isGameOver,

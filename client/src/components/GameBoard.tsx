@@ -25,6 +25,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({
     currentTurnId,
     turnPhase,
     topDiscardCard,
+    prevTopDiscardCard,
+    currentTurnDiscards,
     drawPileCount,
     roundNumber,
     history
@@ -203,19 +205,40 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
             {/* Discard Pile */}
             <div className="pile-container">
-              <span className="pile-title">Discard</span>
+              <span className="pile-title">Discard Pile</span>
               <div 
                 className={`pile-box ${isMyTurn && turnPhase === 'DRAW' ? 'active-pile' : ''}`}
                 onClick={() => handleDrawClick('discardPile')}
                 style={{ cursor: isMyTurn && turnPhase === 'DRAW' ? 'pointer' : 'not-allowed' }}
               >
-                {topDiscardCard ? (
-                  <Card card={topDiscardCard} disabled={true} />
+                {prevTopDiscardCard ? (
+                  <Card card={prevTopDiscardCard} disabled={true} />
                 ) : (
                   <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Empty</span>
                 )}
               </div>
             </div>
+
+            {/* Current Turn Discards (Show fanned out cards) */}
+            {currentTurnDiscards && currentTurnDiscards.length > 0 && (
+              <div className="pile-container">
+                <span className="pile-title">Current Discard ({currentTurnDiscards.length})</span>
+                <div className="fanned-cards-container">
+                  {currentTurnDiscards.map((card, index) => (
+                    <div 
+                      key={card.id} 
+                      className="fanned-card-wrapper" 
+                      style={{ 
+                        '--index': index,
+                        '--total': currentTurnDiscards.length 
+                      } as React.CSSProperties}
+                    >
+                      <Card card={card} disabled={true} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
