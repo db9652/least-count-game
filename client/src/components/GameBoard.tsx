@@ -500,7 +500,7 @@ export const GameBoard: React.FC<GameBoardProps> = ({
           </div>
         </div>
 
-        <div className="panel-section" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <div className="panel-section panel-section-history">
           <h3>History Log</h3>
           <div className="history-log">
             {history.map((log, index) => (
@@ -514,9 +514,8 @@ export const GameBoard: React.FC<GameBoardProps> = ({
 
         {/* Gameplay Rules Button */}
         <button 
-          className="rules-btn btn btn-secondary" 
+          className="sidebar-bottom-btn btn btn-secondary" 
           onClick={() => setIsRulesOpen(true)}
-          style={{ width: '100%', justifyContent: 'center', marginTop: 'auto', flexShrink: 0 }}
         >
           <BookOpen size={16} />
           Gameplay Rules
