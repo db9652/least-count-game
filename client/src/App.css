@@ -1133,3 +1133,42 @@ body {
   font-family: monospace;
   font-size: 0.85rem;
 }
+
+/* Sound Toggle Button */
+.sound-toggle-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--card-border);
+  color: var(--text-primary);
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.sound-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.08);
+  color: var(--primary);
+  border-color: var(--primary-glow);
+  box-shadow: 0 0 10px var(--primary-glow);
+}
+
+.sound-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+.sound-toggle-btn.muted {
+  color: var(--text-secondary);
+}
+
+.sound-toggle-btn.muted:hover {
+  color: var(--danger);
+  border-color: var(--danger-glow);
+  box-shadow: 0 0 10px var(--danger-glow);
+}

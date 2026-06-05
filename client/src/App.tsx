@@ -4,7 +4,8 @@ import type { ClientGameState } from '../../server/src/types';
 import { Lobby } from './components/Lobby';
 import { GameBoard } from './components/GameBoard';
 import { Scoreboard } from './components/Scoreboard';
-import { LogIn, PlusCircle, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { LogIn, PlusCircle, AlertTriangle, ShieldCheck, Volume2, VolumeX } from 'lucide-react';
+import { soundManager } from './utils/soundManager';
 import './App.css';
 
 export default function App() {
@@ -14,6 +15,14 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [connected, setConnected] = useState(false);
   const [gameState, setGameState] = useState<ClientGameState | null>(null);
+  const [isMuted, setIsMuted] = useState(soundManager.isMuted());
+
+  const toggleMute = () => {
+    const nextMuted = !soundManager.isMuted();
+    soundManager.setMuted(nextMuted);
+    setIsMuted(nextMuted);
+    soundManager.play('join'); // Play quick confirm tone
+  };
 
   // Load saved session on mount
   useEffect(() => {
@@ -43,7 +52,14 @@ export default function App() {
     });
 
     socket.on('gameStateUpdate', (newState: ClientGameState) => {
-      setGameState(newState);
+      setGameState(prev => {
+        if (prev && !prev.gameStarted && !newState.gameStarted) {
+          if (newState.players.length > prev.players.length) {
+            soundManager.play('join');
+          }
+        }
+        return newState;
+      });
       setError(null);
       // Persist session
       localStorage.setItem('least_count_room_id', newState.roomId);
@@ -160,9 +176,19 @@ export default function App() {
           <div className="logo-section">
             <h1>🃏 Least Count <span>Multiplayer</span></h1>
           </div>
-          <div className={`status-indicator ${connected ? 'connected' : 'disconnected'}`}>
-            <div className="status-dot" />
-            <span>{connected ? 'Server Connected' : 'Connecting to Server...'}</span>
+          <div className="header-actions">
+            <button 
+              type="button"
+              className={`sound-toggle-btn ${isMuted ? 'muted' : ''}`} 
+              onClick={toggleMute}
+              title={isMuted ? "Unmute Game Sounds" : "Mute Game Sounds"}
+            >
+              {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+            </button>
+            <div className={`status-indicator ${connected ? 'connected' : 'disconnected'}`}>
+              <div className="status-dot" />
+              <span>{connected ? 'Server Connected' : 'Connecting to Server...'}</span>
+            </div>
           </div>
         </header>
 
@@ -307,9 +333,19 @@ export default function App() {
           <div className="logo-section">
             <h1>🃏 Least Count <span>Lobby</span></h1>
           </div>
-          <div className="status-indicator connected">
-            <div className="status-dot" />
-            <span>Room {gameState.roomId}</span>
+          <div className="header-actions">
+            <button 
+              type="button"
+              className={`sound-toggle-btn ${isMuted ? 'muted' : ''}`} 
+              onClick={toggleMute}
+              title={isMuted ? "Unmute Game Sounds" : "Mute Game Sounds"}
+            >
+              {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+            </button>
+            <div className="status-indicator connected">
+              <div className="status-dot" />
+              <span>Room {gameState.roomId}</span>
+            </div>
           </div>
         </header>
 
@@ -340,6 +376,14 @@ export default function App() {
           <h1>🃏 Least Count <span>Active Table</span></h1>
         </div>
         <div className="header-actions">
+          <button 
+            type="button"
+            className={`sound-toggle-btn ${isMuted ? 'muted' : ''}`} 
+            onClick={toggleMute}
+            title={isMuted ? "Unmute Game Sounds" : "Mute Game Sounds"}
+          >
+            {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+          </button>
           <div className="status-indicator connected" style={{ background: 'rgba(16, 185, 129, 0.1)', borderColor: 'rgba(16, 185, 129, 0.2)', color: '#10b981' }}>
             <ShieldCheck size={14} />
             <span>Secure Table</span>

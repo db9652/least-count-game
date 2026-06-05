@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card } from './Card';
 import type { Card as CardType, ClientGameState } from '../../../server/src/types';
 import { AlertCircle, BookOpen, X, Send, MessageSquare } from 'lucide-react';
+import { soundManager } from '../utils/soundManager';
 
 interface GameBoardProps {
   gameState: ClientGameState;
@@ -53,6 +54,56 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   React.useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Audio state triggers
+  const prevHistoryLength = React.useRef(history.length);
+  React.useEffect(() => {
+    if (history.length > prevHistoryLength.current) {
+      const latestEvent = history[history.length - 1];
+      
+      if (latestEvent.includes("discarded:")) {
+        soundManager.play('discard');
+      } else if (latestEvent.includes("drew a card")) {
+        soundManager.play('draw-deck');
+      } else if (latestEvent.includes("drew the open card")) {
+        soundManager.play('draw-discard');
+      } else if (latestEvent.includes("SUCCESSFUL SHOW!")) {
+        soundManager.play('show-success');
+      } else if (latestEvent.includes("WRONG SHOW!")) {
+        soundManager.play('show-fail');
+      } else if (latestEvent.includes("The game has started!")) {
+        soundManager.play('shuffle');
+      } else if (latestEvent.includes("joined the room.")) {
+        soundManager.play('join');
+      }
+    }
+    prevHistoryLength.current = history.length;
+  }, [history]);
+
+  const prevTurnId = React.useRef(currentTurnId);
+  React.useEffect(() => {
+    if (currentTurnId !== prevTurnId.current) {
+      if (currentTurnId === myId) {
+        soundManager.play('your-turn');
+      } else if (prevTurnId.current !== null && prevTurnId.current !== undefined) {
+        soundManager.play('turn-change');
+      }
+    }
+    prevTurnId.current = currentTurnId;
+  }, [currentTurnId, myId]);
+
+  const prevMessagesCount = React.useRef(messages?.length || 0);
+  React.useEffect(() => {
+    const currentCount = messages?.length || 0;
+    if (currentCount > prevMessagesCount.current) {
+      const latestMessage = messages[currentCount - 1];
+      const myName = players.find(p => p.id === myId)?.name || '';
+      if (latestMessage.senderName !== myName) {
+        soundManager.play('chat');
+      }
+    }
+    prevMessagesCount.current = currentCount;
+  }, [messages, players, myId]);
 
   // Sync orderedHand with myHand when myHand changes
   React.useEffect(() => {
