@@ -280,8 +280,8 @@ export default function App() {
                   If your hand is <strong>10 points or less</strong>, you can declare "Show" at the start of your turn.
                 </p>
                 <ul style={{ paddingLeft: '1.1rem', margin: '0.2rem 0 0 0', listStyleType: 'circle' }}>
-                  <li><strong>Success (Lowest hand):</strong> You get 0 pts; others get hand values (capped at 25).</li>
-                  <li><strong>Wrong Show:</strong> You get a <strong>+25 penalty</strong>.</li>
+                  <li><strong>Success (You have strictly the lowest hand):</strong> You get <code>0 points</code>. All other players get their hand's points (capped at a maximum of <code>25 points</code>).</li>
+                  <li><strong>Wrong Show (Someone has lower or equal hand):</strong> You get a <strong>+25 penalty</strong>. The player(s) with the actual lowest hand get <code>0 points</code>. All other players get their hand's points (capped at <code>25 points</code>).</li>
                 </ul>
               </section>
             </div>
