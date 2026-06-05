@@ -235,6 +235,57 @@ export default function App() {
               </button>
             </form>
           </div>
+
+          {/* New Gameplay Rules Intro Card */}
+          <div className="rules-intro-card glass-panel" style={{ display: 'flex', flexDirection: 'column', maxHeight: '480px' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#f59e0b', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem', borderBottom: '1px solid var(--card-border)', paddingBottom: '0.5rem' }}>
+              📖 How to Play Least Count
+            </h3>
+            
+            <div style={{ flex: 1, overflowY: 'auto', paddingRight: '0.5rem', fontSize: '0.85rem', lineHeight: '1.6', color: 'var(--text-secondary)' }} className="history-log">
+              <section style={{ marginBottom: '1rem' }}>
+                <h4 style={{ color: 'var(--text-primary)', fontSize: '0.9rem', marginBottom: '0.2rem', fontWeight: 600 }}>🎯 Objective</h4>
+                <p style={{ margin: 0 }}>
+                  End each round with the <strong>lowest card points</strong> in your hand. Players accumulate scores across rounds; crossing <strong>200 points</strong> eliminates you.
+                </p>
+              </section>
+
+              <section style={{ marginBottom: '1rem' }}>
+                <h4 style={{ color: 'var(--text-primary)', fontSize: '0.9rem', marginBottom: '0.2rem', fontWeight: 600 }}>🃏 Card Values</h4>
+                <ul style={{ paddingLeft: '1.1rem', margin: 0, listStyleType: 'disc' }}>
+                  <li><strong>Joker:</strong> 0 points</li>
+                  <li><strong>Ace (A):</strong> 1 point</li>
+                  <li><strong>2 to 9:</strong> Face value</li>
+                  <li><strong>10, J, Q, K:</strong> 10 points each</li>
+                </ul>
+              </section>
+
+              <section style={{ marginBottom: '1rem' }}>
+                <h4 style={{ color: 'var(--text-primary)', fontSize: '0.9rem', marginBottom: '0.2rem', fontWeight: 600 }}>🔄 Turn Flow</h4>
+                <p style={{ margin: 0 }}>
+                  You must <strong>Discard First</strong> (one card, or multiple of the same rank) and then <strong>Draw Next</strong> (from Closed Deck or Discard Pile).
+                </p>
+              </section>
+
+              <section style={{ marginBottom: '1rem' }}>
+                <h4 style={{ color: 'var(--text-primary)', fontSize: '0.9rem', marginBottom: '0.2rem', fontWeight: 600 }}>⚡ Skip Draw Rule</h4>
+                <p style={{ margin: 0 }}>
+                  If you discard cards matching the rank of the top card of the Discard Pile at the start of your turn, you skip drawing, reducing your hand size!
+                </p>
+              </section>
+
+              <section style={{ marginBottom: '0.5rem' }}>
+                <h4 style={{ color: 'var(--text-primary)', fontSize: '0.9rem', marginBottom: '0.2rem', fontWeight: 600 }}>📢 Declaring "Show"</h4>
+                <p style={{ margin: 0 }}>
+                  If your hand is <strong>10 points or less</strong>, you can declare "Show" at the start of your turn.
+                </p>
+                <ul style={{ paddingLeft: '1.1rem', margin: '0.2rem 0 0 0', listStyleType: 'circle' }}>
+                  <li><strong>Success (Lowest hand):</strong> You get 0 pts; others get hand values (capped at 25).</li>
+                  <li><strong>Wrong Show:</strong> You get a <strong>+25 penalty</strong>.</li>
+                </ul>
+              </section>
+            </div>
+          </div>
         </div>
       </div>
     );
