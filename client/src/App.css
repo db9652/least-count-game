@@ -346,6 +346,7 @@ body {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
   perspective: 1000px;
+  container-type: inline-size;
 }
 
 .card-inner {
@@ -373,7 +374,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 0.5rem;
+  padding: 10cqi;
 }
 
 .card-front.red-suit {
@@ -410,7 +411,8 @@ body {
   display: flex;
   justify-content: space-between;
   font-weight: 700;
-  font-size: 0.75rem;
+  font-size: 15cqi;
+  line-height: 1;
 }
 
 .card-front-center {
@@ -418,14 +420,16 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 2.5rem;
+  font-size: 50cqi;
+  line-height: 1;
 }
 
 .card-front-bottom {
   display: flex;
   justify-content: space-between;
   font-weight: 700;
-  font-size: 0.75rem;
+  font-size: 15cqi;
+  line-height: 1;
   transform: rotate(180deg);
 }
 
@@ -449,6 +453,13 @@ body {
   background: linear-gradient(135deg, #fef08a, #facc15);
   color: #713f12;
   border-color: #eab308;
+}
+
+.joker-text {
+  font-size: 22cqi;
+  font-weight: 700;
+  transform: rotate(-90deg);
+  letter-spacing: 0.1em;
 }
 
 /* Game Table Layout */
