@@ -49,11 +49,17 @@ export const GameBoard: React.FC<GameBoardProps> = ({
   // Chat input state
   const [chatInput, setChatInput] = useState('');
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
+  const historyEndRef = React.useRef<HTMLDivElement>(null);
 
   // Scroll to bottom when new messages arrive
   React.useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Scroll to bottom when new history logs arrive
+  React.useEffect(() => {
+    historyEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [history]);
 
   // Audio state triggers
   const prevHistoryLength = React.useRef(history.length);
@@ -497,11 +503,12 @@ export const GameBoard: React.FC<GameBoardProps> = ({
         <div className="panel-section" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <h3>History Log</h3>
           <div className="history-log">
-            {[...history].reverse().map((log, index) => (
+            {history.map((log, index) => (
               <div key={index} className="history-item">
                 {log}
               </div>
             ))}
+            <div ref={historyEndRef} />
           </div>
         </div>
 
