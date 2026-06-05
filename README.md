@@ -28,35 +28,6 @@ In **Least Count**, the objective is to end the round with the lowest total card
 
 ---
 
-## 📂 Project Structure
-
-```
-least-count/
-├── package.json          # Root monorepo scripts
-├── least_count_rules.md  # Detailed rules sheet
-├── setup.md              # Installation and run guide
-├── server/               # Node.js backend
-│   ├── package.json
-│   ├── tsconfig.json
-│   └── src/
-│       ├── index.ts      # Express & Socket.io entry point
-│       ├── game.ts       # Room and game state manager
-│       └── types.ts      # Shared TS interfaces
-└── client/               # React + Vite frontend
-    ├── package.json
-    ├── vite.config.ts
-    ├── index.html
-    └── src/
-        ├── main.tsx
-        ├── socket.ts     # Socket.io connection instance
-        ├── App.tsx       # State orchestrator & screen router
-        ├── App.css       # Deep-green felt card table design
-        └── components/
-            ├── Card.tsx        # Hover-animated playing card
-            ├── Lobby.tsx       # Pre-game room and lobby UI
-            ├── GameBoard.tsx   # felt table game board layout
-            └── Scoreboard.tsx  # Round-end hands reveal & standings
-```
 
 ---
 
