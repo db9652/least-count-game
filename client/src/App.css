@@ -163,29 +163,16 @@ body {
 .welcome-screen {
   flex: 1;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 2rem;
   padding: 2rem;
   position: relative;
   z-index: 1;
-  max-width: 1000px;
-  width: 100%;
-  margin: 0 auto;
 }
 
 .welcome-card {
-  max-width: 450px;
+  max-width: 480px;
   width: 100%;
-  flex: 1 1 350px;
-}
-
-.rules-intro-card {
-  max-width: 450px;
-  width: 100%;
-  flex: 1 1 350px;
 }
 
 .welcome-title {
