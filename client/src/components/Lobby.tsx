@@ -29,9 +29,27 @@ export const Lobby: React.FC<LobbyProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
   const [showModify, setShowModify] = useState(false);
+  
+  // Local state for editing inputs
+  const [localEliminationScore, setLocalEliminationScore] = useState<string>('');
+  const [localCardsPerPlayer, setLocalCardsPerPlayer] = useState<string>('');
+  const [localShowThreshold, setLocalShowThreshold] = useState<string>('');
+  const [localPenaltyScore, setLocalPenaltyScore] = useState<string>('');
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
   const me = players.find(p => p.id === myId);
   const isHost = me?.isHost || false;
   const canStart = players.length >= 2;
+
+  // Sync inputs with global rules when closed
+  React.useEffect(() => {
+    if (!showModify) {
+      setLocalEliminationScore(rules.eliminationScore.toString());
+      setLocalCardsPerPlayer(rules.cardsPerPlayer.toString());
+      setLocalShowThreshold(rules.showThreshold.toString());
+      setLocalPenaltyScore(rules.penaltyScore.toString());
+    }
+  }, [rules, showModify]);
 
   const copyRoomCode = () => {
     navigator.clipboard.writeText(roomId);
@@ -39,11 +57,56 @@ export const Lobby: React.FC<LobbyProps> = ({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const updateRule = (key: string, val: number) => {
+  const handleToggleModify = () => {
+    if (!showModify) {
+      setLocalEliminationScore(rules.eliminationScore.toString());
+      setLocalCardsPerPlayer(rules.cardsPerPlayer.toString());
+      setLocalShowThreshold(rules.showThreshold.toString());
+      setLocalPenaltyScore(rules.penaltyScore.toString());
+      setErrorMsg(null);
+    }
+    setShowModify(!showModify);
+  };
+
+  const handleSaveRules = () => {
+    const elim = parseInt(localEliminationScore, 10);
+    const cards = parseInt(localCardsPerPlayer, 10);
+    const show = parseInt(localShowThreshold, 10);
+    const penalty = parseInt(localPenaltyScore, 10);
+
+    if (isNaN(elim) || elim < 50 || elim > 500) {
+      setErrorMsg("Elimination Score Limit must be between 50 and 500.");
+      return;
+    }
+    if (isNaN(cards) || cards < 3 || cards > 10) {
+      setErrorMsg("Cards Dealt per Player must be between 3 and 10.");
+      return;
+    }
+    if (isNaN(show) || show < 1 || show > 20) {
+      setErrorMsg("Max Score to Show must be between 1 and 20.");
+      return;
+    }
+    if (isNaN(penalty) || penalty < 5 || penalty > 50) {
+      setErrorMsg("Wrong Show Penalty / Cap must be between 5 and 50.");
+      return;
+    }
+
+    setErrorMsg(null);
     socket.emit('updateRules', {
       roomId,
       playerId: myId,
-      rules: { [key]: val }
+      rules: {
+        eliminationScore: elim,
+        cardsPerPlayer: cards,
+        showThreshold: show,
+        penaltyScore: penalty
+      }
+    }, (response: any) => {
+      if (response?.error) {
+        setErrorMsg(response.error);
+      } else {
+        setShowModify(false);
+      }
     });
   };
 
@@ -86,7 +149,7 @@ export const Lobby: React.FC<LobbyProps> = ({
 
         {/* Gameplay Rules Section */}
         <div style={{ marginBottom: '1.5rem', background: 'rgba(255, 255, 255, 0.02)', padding: '1rem', borderRadius: '0.5rem', border: '1px solid var(--card-border)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: isHost ? 'pointer' : 'default' }} onClick={() => isHost && setShowModify(!showModify)}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: isHost ? 'pointer' : 'default' }} onClick={() => isHost && handleToggleModify()}>
             <h4 style={{ fontSize: '0.9rem', textTransform: 'uppercase', color: '#f59e0b', margin: 0 }}>
               ⚙️ Gameplay Rules Settings {isHost && (showModify ? '▲' : '▼')}
             </h4>
@@ -99,57 +162,83 @@ export const Lobby: React.FC<LobbyProps> = ({
 
           {isHost && showModify ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+              {errorMsg && (
+                <div style={{ padding: '0.6rem 0.8rem', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '0.4rem', color: '#f87171', fontSize: '0.8rem', fontWeight: 500 }}>
+                  ⚠️ {errorMsg}
+                </div>
+              )}
+
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 80px', alignItems: 'center', gap: '1rem' }}>
-                <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>🏆 Elimination Score Limit:</label>
+                <div>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>🏆 Elimination Score Limit:</label>
+                  <span style={{ fontSize: '0.65rem', color: 'rgba(255, 255, 255, 0.3)', display: 'block' }}>Range: 50 - 500</span>
+                </div>
                 <input 
-                  type="number" 
-                  min="50" 
-                  max="500" 
-                  step="10"
+                  type="text" 
                   className="form-input" 
                   style={{ padding: '0.3rem 0.5rem', fontSize: '0.85rem', textAlign: 'center' }}
-                  value={rules.eliminationScore} 
-                  onChange={(e) => updateRule('eliminationScore', parseInt(e.target.value) || 200)}
+                  value={localEliminationScore} 
+                  onChange={(e) => setLocalEliminationScore(e.target.value)}
                 />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 80px', alignItems: 'center', gap: '1rem' }}>
-                <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>🎴 Cards Dealt per Player:</label>
+                <div>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>🎴 Cards Dealt per Player:</label>
+                  <span style={{ fontSize: '0.65rem', color: 'rgba(255, 255, 255, 0.3)', display: 'block' }}>Range: 3 - 10</span>
+                </div>
                 <input 
-                  type="number" 
-                  min="3" 
-                  max="10" 
+                  type="text" 
                   className="form-input" 
                   style={{ padding: '0.3rem 0.5rem', fontSize: '0.85rem', textAlign: 'center' }}
-                  value={rules.cardsPerPlayer} 
-                  onChange={(e) => updateRule('cardsPerPlayer', parseInt(e.target.value) || 7)}
+                  value={localCardsPerPlayer} 
+                  onChange={(e) => setLocalCardsPerPlayer(e.target.value)}
                 />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 80px', alignItems: 'center', gap: '1rem' }}>
-                <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>🎯 Max Score to Show:</label>
+                <div>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>🎯 Max Score to Show:</label>
+                  <span style={{ fontSize: '0.65rem', color: 'rgba(255, 255, 255, 0.3)', display: 'block' }}>Range: 1 - 20</span>
+                </div>
                 <input 
-                  type="number" 
-                  min="1" 
-                  max="20" 
+                  type="text" 
                   className="form-input" 
                   style={{ padding: '0.3rem 0.5rem', fontSize: '0.85rem', textAlign: 'center' }}
-                  value={rules.showThreshold} 
-                  onChange={(e) => updateRule('showThreshold', parseInt(e.target.value) || 10)}
+                  value={localShowThreshold} 
+                  onChange={(e) => setLocalShowThreshold(e.target.value)}
                 />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 80px', alignItems: 'center', gap: '1rem' }}>
-                <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>⚠️ Wrong Show Penalty / Cap:</label>
+                <div>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>⚠️ Wrong Show Penalty / Cap:</label>
+                  <span style={{ fontSize: '0.65rem', color: 'rgba(255, 255, 255, 0.3)', display: 'block' }}>Range: 5 - 50</span>
+                </div>
                 <input 
-                  type="number" 
-                  min="5" 
-                  max="50" 
+                  type="text" 
                   className="form-input" 
                   style={{ padding: '0.3rem 0.5rem', fontSize: '0.85rem', textAlign: 'center' }}
-                  value={rules.penaltyScore} 
-                  onChange={(e) => updateRule('penaltyScore', parseInt(e.target.value) || 25)}
+                  value={localPenaltyScore} 
+                  onChange={(e) => setLocalPenaltyScore(e.target.value)}
                 />
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                <button 
+                  className="btn btn-primary" 
+                  style={{ flex: 1, padding: '0.5rem', fontSize: '0.8rem', justifyContent: 'center' }}
+                  onClick={handleSaveRules}
+                >
+                  Save Rules
+                </button>
+                <button 
+                  className="btn btn-secondary" 
+                  style={{ padding: '0.5rem 1rem', fontSize: '0.8rem', justifyContent: 'center' }}
+                  onClick={() => setShowModify(false)}
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           ) : (
