@@ -2,42 +2,42 @@ import express from 'express';
 import { GameRoom } from './game';
 
 export function startDashboard(
-  rooms: Map<string, GameRoom>,
-  socketToPlayerMap: Map<string, { roomId: string; playerId: string }>,
-  completedGames: any[]
+    rooms: Map<string, GameRoom>,
+    socketToPlayerMap: Map<string, { roomId: string; playerId: string }>,
+    completedGames: any[]
 ) {
-  const app = express();
-  const PORT = process.env.DASHBOARD_PORT || 4000;
+    const app = express();
+    const PORT = process.env.DASHBOARD_PORT || 4000;
 
-  app.get('/api/stats', (req, res) => {
-    const activeRooms = Array.from(rooms.entries()).map(([id, room]) => ({
-      id,
-      playersCount: room.state.players.length,
-      gameStarted: room.state.gameStarted,
-      roundNumber: room.state.roundNumber,
-      players: room.state.players.map(p => ({ name: p.name, score: p.score, isHost: p.isHost }))
-    }));
+    app.get('/api/stats', (req, res) => {
+        const activeRooms = Array.from(rooms.entries()).map(([id, room]) => ({
+            id,
+            playersCount: room.state.players.length,
+            gameStarted: room.state.gameStarted,
+            roundNumber: room.state.roundNumber,
+            players: room.state.players.map(p => ({ name: p.name, score: p.score, isHost: p.isHost }))
+        }));
 
-    res.json({
-      roomsCount: rooms.size,
-      playersCount: socketToPlayerMap.size,
-      completedGamesCount: completedGames.length,
-      activeRooms,
-      completedGames
+        res.json({
+            roomsCount: rooms.size,
+            playersCount: socketToPlayerMap.size,
+            completedGamesCount: completedGames.length,
+            activeRooms,
+            completedGames
+        });
     });
-  });
 
-  app.get('/', (req, res) => {
-    res.send(getDashboardHtml());
-  });
+    app.get('/', (req, res) => {
+        res.send(getDashboardHtml());
+    });
 
-  app.listen(PORT, () => {
-    console.log(`Least Count Dashboard is running on port ${PORT}`);
-  });
+    app.listen(PORT, () => {
+        console.log(`Least Count Dashboard is running on port ${PORT}`);
+    });
 }
 
 function getDashboardHtml() {
-  return `
+    return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -463,7 +463,7 @@ function getDashboardHtml() {
         fetchStats();
         
         // Auto refresh every 5 seconds
-        setInterval(fetchStats, 5000);
+        setInterval(fetchStats, 10000);
     </script>
 </body>
 </html>

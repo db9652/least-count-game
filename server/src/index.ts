@@ -2,6 +2,8 @@ import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
+import fs from 'fs';
+import path from 'path';
 import { GameRoom } from './game';
 import { startDashboard } from './dashboard';
 
@@ -30,7 +32,16 @@ const socketToPlayerMap = new Map<string, { roomId: string; playerId: string }>(
 const roomCleanupTimers = new Map<string, NodeJS.Timeout>();
 
 // In-memory completed games history
-const completedGames: any[] = [];
+const HISTORY_FILE = path.join(__dirname, '../history.json');
+let completedGames: any[] = [];
+try {
+  if (fs.existsSync(HISTORY_FILE)) {
+    const data = fs.readFileSync(HISTORY_FILE, 'utf-8');
+    completedGames = JSON.parse(data);
+  }
+} catch (e) {
+  console.error('Failed to load history file:', e);
+}
 
 function archiveCompletedGame(room: GameRoom) {
   const winner = room.state.players.find(p => p.id === room.state.winnerId);
@@ -44,6 +55,11 @@ function archiveCompletedGame(room: GameRoom) {
   completedGames.unshift(gameInfo);
   if (completedGames.length > 50) {
     completedGames.pop();
+  }
+  try {
+    fs.writeFileSync(HISTORY_FILE, JSON.stringify(completedGames, null, 2));
+  } catch (e) {
+    console.error('Failed to save history file:', e);
   }
 }
 
