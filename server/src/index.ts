@@ -3,13 +3,14 @@ import http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import { GameRoom } from './game';
+import { startDashboard } from './dashboard';
 
 const app = express();
 app.use(cors());
 
 const server = http.createServer(app);
 const io = new Server(server, {
-  path: '/least-count/socket.io',
+  path: '/socket.io',
   cors: {
     origin: '*', // Allow all origins for local dev
     methods: ['GET', 'POST']
@@ -27,6 +28,24 @@ const socketToPlayerMap = new Map<string, { roomId: string; playerId: string }>(
 
 // Map to track room deletion timers
 const roomCleanupTimers = new Map<string, NodeJS.Timeout>();
+
+// In-memory completed games history
+const completedGames: any[] = [];
+
+function archiveCompletedGame(room: GameRoom) {
+  const winner = room.state.players.find(p => p.id === room.state.winnerId);
+  const gameInfo = {
+    roomId: room.state.roomId,
+    winnerName: winner ? winner.name : 'Unknown',
+    players: room.state.players.map(p => ({ name: p.name, score: p.score, isHost: p.isHost })),
+    roundNumber: room.state.roundNumber,
+    completedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+  };
+  completedGames.unshift(gameInfo);
+  if (completedGames.length > 50) {
+    completedGames.pop();
+  }
+}
 
 function cancelCleanupTimer(roomId: string) {
   const timer = roomCleanupTimers.get(roomId);
@@ -238,6 +257,10 @@ io.on('connection', (socket) => {
       room.handleDeclareShow(playerId);
       broadcastGameState(roomId);
       callback?.({ success: true });
+
+      if (room.state.isGameOver) {
+        archiveCompletedGame(room);
+      }
     } catch (err: any) {
       callback?.({ error: err.message });
     }
@@ -320,3 +343,6 @@ io.on('connection', (socket) => {
 server.listen(PORT, () => {
   console.log(`Least Count server is running on port ${PORT}`);
 });
+
+// Start the admin dashboard on a separate port
+startDashboard(rooms, socketToPlayerMap, completedGames);
