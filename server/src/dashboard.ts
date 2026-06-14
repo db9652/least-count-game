@@ -9,6 +9,22 @@ export function startDashboard(
     const app = express();
     const PORT = process.env.DASHBOARD_PORT || 4000;
 
+    // Basic Auth Middleware
+    app.use((req, res, next) => {
+        const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
+        const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':');
+
+        const expectedUser = process.env.DASHBOARD_USER || 'admin';
+        const expectedPass = process.env.DASHBOARD_PASSWORD || 'admin';
+
+        if (login && password && login === expectedUser && password === expectedPass) {
+            return next();
+        }
+
+        res.set('WWW-Authenticate', 'Basic realm="Least Count Dashboard"');
+        res.status(401).send('Authentication required.');
+    });
+
     app.get('/api/stats', (req, res) => {
         const activeRooms = Array.from(rooms.entries()).map(([id, room]) => ({
             id,
