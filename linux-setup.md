@@ -48,6 +48,7 @@ npm start
 Once running:
 - **Client (Frontend)**: [http://localhost:5173/](http://localhost:5173/)
 - **Server (Backend)**: [http://localhost:3000/](http://localhost:3000/)
+- **Admin Dashboard**: [http://localhost:4000/](http://localhost:4000/)
 
 ---
 
@@ -74,9 +75,47 @@ If you have a firewall enabled on Linux, you must allow incoming traffic to Vite
   ```bash
   sudo firewall-cmd --add-port=5173/tcp --permanent
   sudo firewall-cmd --add-port=3000/tcp --permanent
+  sudo firewall-cmd --add-port=4000/tcp --permanent
   sudo firewall-cmd --reload
   ```
 
 ### Step 4.3: Expose Server & Connect
-1. Make sure `client/vite.config.ts` has `host: true` set inside the `server` config block.
-2. Share the client link with your friends (e.g. `http://192.168.1.50:5173/`).
+1. Make sure `client/vite.config.ts` has `host: true` set in the `server` config block.
+2. Restart the application: `npm start`
+3. Share the client link with your friends (e.g. `http://192.168.1.50:5173/`).
+4. Since the Socket connection in the client automatically connects to the server IP on port 3000, they will connect to your room instantly!
+
+---
+
+## 🔁 5. Run Automatically on System Boot (systemd)
+
+To make the game and dashboard start automatically whenever your Linux machine boots up, you can use a user-level systemd service.
+
+1. Ensure the directory exists:
+   ```bash
+   mkdir -p ~/.config/systemd/user/
+   ```
+2. Create a `least-count.service` file in that directory (`~/.config/systemd/user/least-count.service`):
+   ```ini
+   [Unit]
+   Description=Least Count Multiplayer Game Service
+   After=network.target
+
+   [Service]
+   Type=simple
+   WorkingDirectory=/home/deepblue/ai/least-count
+   Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+   ExecStart=/usr/bin/npm start
+   Restart=always
+   RestartSec=10
+
+   [Install]
+   WantedBy=default.target
+   ```
+   *(Be sure to replace the `WorkingDirectory` and `ExecStart` paths with your actual paths if they differ)*
+3. Enable and start the service:
+   ```bash
+   systemctl --user daemon-reload
+   systemctl --user enable --now least-count.service
+   ```
+   Now the frontend, backend, and dashboard will auto-start in the background on every reboot!

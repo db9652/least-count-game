@@ -38,6 +38,10 @@ npm start
 Once running:
 - **Client (Frontend)**: Running at **[http://localhost:5173/](http://localhost:5173/)**
 - **Server (Backend/WebSockets)**: Running at **[http://localhost:3000/](http://localhost:3000/)**
+- **Admin Dashboard**: Running at **[http://localhost:4000/](http://localhost:4000/)**
+
+> **Note on Domain Tunneling / Reverse Proxies:**
+> If you are using a tunneling service like Cloudflare Tunnels or a reverse proxy (e.g. NGINX), make sure to route the `/socket.io` path to the backend server (port 3000) while routing the base domain to the frontend (port 5173). The game frontend will automatically use `/socket.io` for its WebSocket connection.
 
 ---
 

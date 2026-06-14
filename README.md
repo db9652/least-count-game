@@ -24,6 +24,7 @@ In **Least Count**, the objective is to end the round with the lowest total card
 
 - **Frontend**: React, Vite, TypeScript, Vanilla CSS (with glassmorphism and card animations), Lucide Icons.
 - **Backend**: Node.js, Express, Socket.io (WebSocket), TypeScript, ts-node-dev.
+- **Admin Dashboard**: Real-time admin dashboard (port 4000) for monitoring active rooms, connected players, and persistent completed game history.
 - **Monorepo Manager**: Concurrently (runs both client and server with a single command).
 
 ---
